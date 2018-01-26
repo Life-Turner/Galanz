@@ -1,4 +1,4 @@
-# Copy Models
+' Copy Models
 Public Sub copy_models()    
     Dim sht_index As Byte    
     Dim start_index As Byte    
@@ -21,7 +21,7 @@ Public Sub copy_models()   
     Next sht_indexEnd Sub
 End Sub
 
-# Change Orders
+' Change Orders
 Public Sub change_orders()    
     Dim sht_index As Byte    
     Dim wb_name As String    
@@ -42,7 +42,7 @@ Public Sub change_orders()   
     Next sht_indexEnd Sub
 End Sub
 
-# Name Models
+' Name Models
 Public Sub name_models()
     Dim wb_name As String
     Dim sht_name As String
@@ -60,5 +60,30 @@ Public Sub name_models()
         Sheets("业务大区").Activate        
         sht_name = Range("A" & sht_index).Value        
         Sheets(sht_index).Name = sht_name    
+    Next sht_index
+End Sub
+
+'Change table name
+Public Sub change_table_name()
+    Dim sht_index As byte
+    Dim start_index As byte
+    Dim ending_index As Byte
+    Dim Step_len As Byte
+    
+    Dim table_index As Byte
+    Dim wb_name As string
+    Dim table_heads As String
+    
+    start_index = 1
+    ending_index = 16
+    step_len = 1
+    
+    table_index = 3
+    wb_name = "价格结构.xlsm"
+    table_heads = "Table1120"
+    For sht_index = start_index To ending_index Step step_len
+        Sheets(sht_index).Activate
+        ActiveSheet.ListObjects(table_heads & table_index).Name = "Table" & sht_index
+        table_index = table_index + 1
     Next sht_index
 End Sub
