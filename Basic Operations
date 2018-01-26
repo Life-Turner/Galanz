@@ -41,3 +41,24 @@ Public Sub change_orders()   
         Sheets(sht_index).Move before:=Sheets(move_loc)    
     Next sht_indexEnd Sub
 End Sub
+
+# Name Models
+Public Sub name_models()
+    Dim wb_name As String
+    Dim sht_name As String
+    Dim sht_index As Byte
+    Dim start_index As Byte
+    Dim ending_index As Byte
+    Dim step_len As Byte
+    
+    start_index = 1
+    ending_index = 16
+    step_distance = 1    
+    wb_name = "价格结构.xlsm"        
+    Workbooks(wb_name).Activate    
+    For sht_index = start_index To ending_index Step step_distance        
+        Sheets("业务大区").Activate        
+        sht_name = Range("A" & sht_index).Value        
+        Sheets(sht_index).Name = sht_name    
+    Next sht_index
+End Sub
