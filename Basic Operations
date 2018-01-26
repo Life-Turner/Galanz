@@ -1,1 +1,43 @@
-# Hello World!
+# Copy Models
+Public Sub copy_models()    
+    Dim sht_index As Byte    
+    Dim start_index As Byte    
+    Dim ending_index As Byte    
+    Dim step_len As Byte    
+    Dim paste_loc As Byte    
+    Dim wb_name As String    
+    Dim sht_name As String
+    
+    wb_name = "功能均价.xlsm"    
+    sht_name = "功能价格对比"
+    start_index = 1    
+    ending_index = 16    
+    step_len = 1
+    paste_loc = 1        
+    
+    Workbooks(wb_name).Activate    
+    For sht_index = start_index To ending_index Step step_len        
+        Sheets(sht_name).Copy before:=Worksheets(paste_loc)    
+    Next sht_indexEnd Sub
+End Sub
+
+# Change Orders
+Public Sub change_orders()    
+    Dim sht_index As Byte    
+    Dim wb_name As String    
+    Dim start_index As Byte    
+    Dim ending_index As Byte    
+    Dim step_distance As Byte    
+    Dim move_loc As Byte
+    
+    wb_name = "价格结构.xlsm"
+    start_index = 1    
+    ending_index = 16    
+    step_distance = 1
+    move_loc = 1       
+    
+    Workbooks(wb_name).Activate    
+    For sht_index = start_index To ending_index Step step_distance        
+        Sheets(sht_index).Move before:=Sheets(move_loc)    
+    Next sht_indexEnd Sub
+End Sub
