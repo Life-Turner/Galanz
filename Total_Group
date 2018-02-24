@@ -1,0 +1,160 @@
+Option Explicit
+
+Public Sub group()
+    Dim n As String
+    Dim m As String
+    Dim i As Integer
+    'Short for beginning index of the pivot table
+    Dim begin_index As Byte
+    'Short for country number that we want to observe
+    Dim company_nums As Byte
+    'Represent the index of last company we want to obeserve
+    Dim max_index As Byte
+    'Represent the index of total row
+    Dim total_index As Byte
+    'Beginning index of the data report
+    Dim b_index As Byte
+    'Total index of the data report
+    Dim t_index As Byte
+    'Appliance Category
+    Dim app As String
+    'Months
+    Dim month As Byte
+
+    Dim Country As String
+    Dim pivot_name As String
+    Dim pivotfield_1 As String
+    
+    Dim data_sht_name As String
+    Dim report_name As String
+    
+    begin_index = 10
+    company_nums = 8
+    max_index = begin_index + company_nums - 1
+    total_index = begin_index + company_nums
+    b_index = 7
+    t_index = 17
+    app = "干衣机"
+    month = 12
+    pivot_name = "数据透视表1"
+    pivotfield_1 = "标准国别"
+    
+    data_sht_name = "海关数据_" & app & "_2016-2017年.xlsm"
+    report_name = app & "—海关数据分析（2017年1-" & month & "月）.xlsx"
+
+    '整合“其他企业”
+    Windows(data_sht_name).Activate
+    For i = 10 To 450 Step 1
+        If Range("B" & i).Value = "其他" Then
+            n = "B" & (Range("B" & i).Row)
+        End If
+    Next
+    
+    m = "B" & (max_index + 1) & ":B" & Range("B" & begin_index).End(xlDown).Offset(-1, 0).Row
+    Union(Range(n), Range(m)).Select
+    Selection.group
+    
+    For i = 10 To 30 Step 1
+        If Range("B" & i).Value = "Group1" Then
+            Range("B" & i).Value = "其他企业"
+        End If
+    Next
+    
+    '折叠数据并对企业进行排序
+    ActiveSheet.PivotTables(pivot_name).PivotFields("企业简称2").ShowDetail = False
+    ActiveSheet.PivotTables(pivot_name).PivotFields("企业简称2").AutoSort xlDescending, _
+        "出口量（万台）", ActiveSheet.PivotTables(pivot_name).PivotColumnAxis.PivotLines(3), 1
+    
+    '复制并粘贴企业名字
+    Range("B" & begin_index & ":B" & max_index).Select
+    Selection.Copy
+    
+    Windows(report_name).Activate
+    Range("B" & b_index).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+
+    '出口量
+    Windows(data_sht_name).Activate
+    Range("C" & begin_index & ":C" & max_index & ",E" & begin_index & ":E" & max_index).Select
+    Selection.Copy
+    Windows(report_name).Activate
+    Range("C" & b_index).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+
+    '出口量（总）
+    Windows(data_sht_name).Activate
+    Range("C" & total_index & ":C" & total_index & ",E" & total_index & ":E" & total_index).Select
+    Selection.Copy
+    Windows(report_name).Activate
+    Range("C" & t_index).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+'
+    '出口额
+    Windows(data_sht_name).Activate
+    Range("D" & begin_index & ":D" & max_index & ",F" & begin_index & ":F" & max_index).Select
+    Selection.Copy
+    Windows(report_name).Activate
+    Range("H" & b_index).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+
+    '出口额（总）
+    Windows(data_sht_name).Activate
+    Range("D" & total_index & ":D" & total_index & ",F" & total_index & ":F" & total_index).Select
+    Selection.Copy
+    Windows(report_name).Activate
+    Range("H" & t_index).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+
+    '筛选月份，复制粘贴
+    Windows(data_sht_name).Activate
+'        With ActiveSheet.PivotTables("数据透视表1").PivotFields("月度")
+'            .PivotItems("12月").Visible = False
+'        End With
+    Range("C" & begin_index & ":D" & max_index).Select
+    Selection.Copy
+    Windows(report_name).Activate
+    Range("R" & b_index).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+
+    '复制粘贴隐藏（总）
+    Windows(data_sht_name).Activate
+    Range("C" & total_index & ":D" & total_index).Select
+    Selection.Copy
+    Windows(report_name).Activate
+    Range("R" & t_index).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+
+    '清除多余列（如果不需要清除多余列，必须将禁用此段
+    Union(Range("B" & (b_index + company_nums) & ":D" & (t_index - 1)), _
+        Range("H" & (b_index + company_nums) & ":I" & (t_index - 1)), _
+        Range("R" & (b_index + company_nums) & ":S" & (t_index - 1))).Select
+    Selection.ClearContents
+
+    '隐藏RS列
+    Columns("R:S").Select
+    Selection.EntireColumn.Hidden = True
+    
+    '滚动到第一列
+    ActiveWindow.ScrollColumn = 1
+    
+    '取消月份筛选
+'        Windows(data_sht_name).Activate
+'        With ActiveSheet.PivotTables("数据透视表1").PivotFields("月度")
+'            .PivotItems("12月").Visible = True
+'        End With
+    
+    '取消“其他企业”分组
+    Windows(data_sht_name).Activate
+    For i = 10 To 30 Step 1
+        If Range("B" & i).Value = "其他企业" Then
+            Range("B" & i).Ungroup
+        End If
+    Next
+End Sub
