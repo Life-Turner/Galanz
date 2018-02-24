@@ -4,6 +4,7 @@ Public Sub group()
     Dim n As String
     Dim m As String
     Dim i As Integer
+    
     'Short for beginning index of the pivot table
     Dim begin_index As Byte
     'Short for country number that we want to observe
@@ -29,12 +30,12 @@ Public Sub group()
     Dim report_name As String
     
     begin_index = 10
-    company_nums = 8
+    company_nums = 15
     max_index = begin_index + company_nums - 1
     total_index = begin_index + company_nums
-    b_index = 7
-    t_index = 17
-    app = "干衣机"
+    b_index = 5
+    t_index = 25
+    app = "空调"
     month = 12
     pivot_name = "数据透视表1"
     pivotfield_1 = "标准国别"
@@ -45,13 +46,18 @@ Public Sub group()
     '整合“其他企业”
     Windows(data_sht_name).Activate
     For i = 10 To 450 Step 1
-        If Range("B" & i).Value = "其他" Then
-            n = "B" & (Range("B" & i).Row)
+        If i <= max_index Then
+            If Range("B" & i).Value = "其他" Then
+                n = "B" & (Range("B" & i).Row)
+                m = "B" & (max_index + 1) & ":B" & Range("B" & begin_index).End(xlDown).Offset(-1, 0).Row
+                Union(Range(n), Range(m)).Select
+                Selection.group
+            End If
         End If
     Next
     
-    m = "B" & (max_index + 1) & ":B" & Range("B" & begin_index).End(xlDown).Offset(-1, 0).Row
-    Union(Range(n), Range(m)).Select
+    m = "B" & max_index & ":B" & Range("B" & begin_index).End(xlDown).Offset(-1, 0).Row
+    Range(m).Select
     Selection.group
     
     For i = 10 To 30 Step 1
@@ -115,6 +121,8 @@ Public Sub group()
 '        With ActiveSheet.PivotTables("数据透视表1").PivotFields("月度")
 '            .PivotItems("12月").Visible = False
 '        End With
+    
+    '复制粘贴隐藏
     Range("C" & begin_index & ":D" & max_index).Select
     Selection.Copy
     Windows(report_name).Activate
